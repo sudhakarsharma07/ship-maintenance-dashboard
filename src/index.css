@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Example custom global styles (optional) */
+body {
+  @apply bg-gray-100 text-gray-800;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.btn {
+  @apply py-2 px-4 rounded font-semibold focus:outline-none focus:ring-2 focus:ring-opacity-50;
+}
+.btn-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-500;
+}
+.btn-secondary {
+  @apply bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500;
+}
+.btn-danger {
+  @apply bg-red-500 text-white hover:bg-red-600 focus:ring-red-500;
+}
+
+.card {
+    @apply bg-white shadow-md rounded-lg p-4 md:p-6;
+}
+
+/* For react-big-calendar (you'll need to import its CSS too) */
+/* @import 'react-big-calendar/lib/css/react-big-calendar.css'; */
+/* Basic styles to make react-big-calendar somewhat usable with Tailwind */
+.rbc-calendar {
+  @apply bg-white p-4 rounded shadow;
+}
+.rbc-toolbar button {
+  @apply btn btn-secondary mx-1 text-sm;
+}
+.rbc-event {
+  @apply bg-blue-500 text-white p-1 rounded text-xs;
+}
+.rbc-event-content {
+  @apply text-xs;
+}
+.rbc-day-slot .rbc-event {
+  @apply border-blue-600;
+}
+.rbc-header {
+  @apply text-center p-2 border-b border-gray-300 font-semibold;
+}
+.rbc-month-view, .rbc-time-view, .rbc-agenda-view {
+  @apply border border-gray-300 rounded;
+}
+.rbc-day-bg {
+  @apply border-l border-gray-200;
+}
+.rbc-day-bg:first-child {
+  @apply border-l-0;
+}
+.rbc-off-range-bg {
+  @apply bg-gray-50;
+}
+.rbc-today {
+  @apply bg-blue-50;
+}
+.rbc-current-time-indicator {
+  @apply bg-red-500;
+}
