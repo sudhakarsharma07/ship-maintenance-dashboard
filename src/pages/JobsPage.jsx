@@ -4,9 +4,10 @@ import { useAuth } from '../contexts/AuthContext';
 import { ROLES, canManageJobs, canUpdateJobStatus } from '../utils/roleUtils';
 import { formatDate } from '../utils/helpers';
 import Modal from '../components/UI/Modal';
-import JobForm from '../components/Jobs/JobForm'; // Create next
-import JobCalendarView from '../components/Jobs/JobCalendarView'; // Create after JobForm
-import { SelectField } from '../components/UI/InputField'; // Assuming SelectField is exported from InputField.jsx
+import JobForm from '../components/Jobs/JobForm';
+import JobCalendarView from '../components/Jobs/JobCalendarView';
+import { SelectField } from '../components/UI/InputField';
+import { FaCalendarAlt, FaList, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 const JobsPage = () => {
   const { jobs, ships, components, engineers, updateJob, deleteJob, loading } = useData();
@@ -14,9 +15,7 @@ const JobsPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'calendar'
-
-  // Filters
+  const [viewMode, setViewMode] = useState('list');
   const [filterShip, setFilterShip] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
@@ -57,32 +56,30 @@ const JobsPage = () => {
     });
   }, [jobs, filterShip, filterStatus, filterPriority]);
 
-
-  if (loading) return <p>Loading jobs...</p>;
+  if (loading) return <p className="text-gray-500 text-center mt-6">Loading jobs...</p>;
 
   const jobStatusOptions = ["Open", "In Progress", "Completed", "Cancelled"];
   const jobPriorityOptions = ["High", "Medium", "Low"];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-        <h1 className="text-3xl font-semibold text-gray-800">Maintenance Jobs</h1>
-        <div className="flex gap-2">
-            {canManageJobs(currentUser) && (
-            <button onClick={openModalForCreate} className="btn btn-primary">
-                Create New Job
+    <div className="space-y-6 px-4 md:px-8 py-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h1 className="text-3xl font-bold text-gray-800">🛠️ Maintenance Jobs</h1>
+        <div className="flex gap-2 flex-wrap">
+          {canManageJobs(currentUser) && (
+            <button onClick={openModalForCreate} className="btn btn-primary flex items-center gap-2 text-sm">
+              <FaPlus /> Create Job
             </button>
-            )}
-            <button 
-                onClick={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')} 
-                className="btn btn-secondary"
-            >
-            {viewMode === 'list' ? 'Switch to Calendar View' : 'Switch to List View'}
-            </button>
+          )}
+          <button
+            onClick={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
+            className="btn btn-secondary flex items-center gap-2 text-sm"
+          >
+            {viewMode === 'list' ? <><FaCalendarAlt /> Calendar View</> : <><FaList /> List View</>}
+          </button>
         </div>
       </div>
 
-      {/* Filters */}
       <div className="card grid grid-cols-1 md:grid-cols-3 gap-4">
         <SelectField label="Filter by Ship" id="filterShip" value={filterShip} onChange={e => setFilterShip(e.target.value)}>
           <option value="">All Ships</option>
@@ -103,9 +100,9 @@ const JobsPage = () => {
           {filteredJobs.length === 0 ? (
             <p className="text-gray-600 mt-4">No jobs match your filters, or no jobs created yet.</p>
           ) : (
-            <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div className="bg-white shadow-md rounded-xl overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 text-sm">
+                <thead className="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
                   <tr>
                     <Th>Type</Th>
                     <Th>Ship</Th>
@@ -117,8 +114,8 @@ const JobsPage = () => {
                     <Th>Actions</Th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredJobs.map((job) => {
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {filteredJobs.map(job => {
                     const ship = ships.find(s => s.id === job.shipId);
                     const component = components.find(c => c.id === job.componentId);
                     const engineer = engineers.find(e => e.id === job.assignedEngineerId);
@@ -130,18 +127,18 @@ const JobsPage = () => {
                         <Td>{job.priority}</Td>
                         <Td>
                           {canUpdateJobStatus(currentUser, job) ? (
-                             <select 
-                                value={job.status} 
-                                onChange={(e) => handleStatusChange(job, e.target.value)}
-                                className="p-1 border rounded text-xs"
-                              >
-                                {jobStatusOptions.map(s => <option key={s} value={s}>{s}</option>)}
-                              </select>
+                            <select
+                              value={job.status}
+                              onChange={(e) => handleStatusChange(job, e.target.value)}
+                              className="p-1 border rounded text-xs"
+                            >
+                              {jobStatusOptions.map(s => <option key={s} value={s}>{s}</option>)}
+                            </select>
                           ) : (
-                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              job.status === 'Open' ? 'bg-blue-100 text-blue-800' :
-                              job.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
-                              job.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                            <span className={`px-2 inline-flex text-xs font-semibold rounded-full ${
+                              job.status === 'Open' ? 'bg-blue-100 text-blue-700' :
+                              job.status === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
+                              job.status === 'Completed' ? 'bg-green-100 text-green-700' :
                               'bg-gray-100 text-gray-800'
                             }`}>
                               {job.status}
@@ -150,13 +147,27 @@ const JobsPage = () => {
                         </Td>
                         <Td>{formatDate(job.scheduledDate)}</Td>
                         <Td>{engineer ? engineer.email.split('@')[0] : 'Unassigned'}</Td>
-                        <Td className="space-x-2">
-                          {canManageJobs(currentUser) && (
-                            <button onClick={() => openModalForEdit(job)} className="text-yellow-600 hover:text-yellow-900 text-sm">Edit</button>
-                          )}
-                          {currentUser?.role === ROLES.ADMIN && ( // Only Admin can delete jobs directly
-                             <button onClick={() => handleDeleteJob(job.id)} className="text-red-600 hover:text-red-900 text-sm">Delete</button>
-                          )}
+                        <Td>
+                          <div className="flex items-center gap-3">
+                            {canManageJobs(currentUser) && (
+                              <button
+                                onClick={() => openModalForEdit(job)}
+                                className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 px-2 py-1 rounded-md text-xs flex items-center gap-1"
+                                title="Edit"
+                              >
+                                <FaEdit /> Edit
+                              </button>
+                            )}
+                            {currentUser?.role === ROLES.ADMIN && (
+                              <button
+                                onClick={() => handleDeleteJob(job.id)}
+                                className="bg-red-100 text-red-800 hover:bg-red-200 px-2 py-1 rounded-md text-xs flex items-center gap-1"
+                                title="Delete"
+                              >
+                                <FaTrash /> Delete
+                              </button>
+                            )}
+                          </div>
                         </Td>
                       </tr>
                     );
@@ -171,18 +182,17 @@ const JobsPage = () => {
       )}
 
       <Modal isOpen={isModalOpen} onClose={closeModal} title={editingJob ? 'Edit Job' : 'Create New Job'}>
-        <JobForm 
-          existingJob={editingJob} 
-          onFormSubmit={closeModal} 
-        />
+        <JobForm existingJob={editingJob} onFormSubmit={closeModal} />
       </Modal>
     </div>
   );
 };
 
-// Helper for table headers/data cells (could be a shared component)
-const Th = ({ children }) => <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{children}</th>;
-const Td = ({ children, className = "" }) => <td className={`px-4 py-3 whitespace-nowrap text-sm text-gray-700 ${className}`}>{children}</td>;
-
+const Th = ({ children }) => (
+  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{children}</th>
+);
+const Td = ({ children, className = "" }) => (
+  <td className={`px-4 py-3 whitespace-nowrap text-sm text-gray-700 ${className}`}>{children}</td>
+);
 
 export default JobsPage;
